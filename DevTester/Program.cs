@@ -1,4 +1,6 @@
-﻿using DataAccess.CRUD;
+﻿using CoreApp.Services;
+using CoreApp;
+using DataAccess.CRUD;
 using DataAccess.DAOs;
 using DTOs;
 using Newtonsoft.Json;
@@ -52,20 +54,20 @@ public class Program
                     Status = status,
                     BirthDate = bdate
                 };
-                var uCrud = new UserCrudFactory();
-                uCrud.Create(User);
+                var um = new UserManager();
+                um.Create(User);
 
                 break;
 
             case 2:
-                uCrud = new UserCrudFactory();
+                /*uCrud = new UserCrudFactory();
                 var listUsers = uCrud.RetrieveAll<User>();
                 foreach (var u in listUsers)
                 {
                     Console.WriteLine(JsonConvert.SerializeObject(u));
                 }
                 break;
-
+                */
             case 3:
                 Console.WriteLine("Digite el titulo");
                 var title = Console.ReadLine();
@@ -92,6 +94,6 @@ public class Program
         }
         
         //Ejecución del procedure
-        var sqlDao = SqlDao.GetInstance();
+        //var sqlDao = SqlDao.GetInstance();
     }
 }

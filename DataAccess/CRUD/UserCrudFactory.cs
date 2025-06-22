@@ -32,7 +32,12 @@ namespace DataAccess.CRUD
 
         public override void Delete(BaseDTO baseDTO)
         {
-            throw new NotImplementedException();
+            var user = baseDTO as User;
+
+            var sqlOperation = new SqlOperation() { ProcedureName = "DEL_USER_PR" };
+            sqlOperation.AddIntParam("P_Id", user.Id);
+
+            _sqlDao.ExecuteProcedure(sqlOperation);
         }
 
         public override List<T> RetrieveAll<T>()
@@ -116,7 +121,19 @@ namespace DataAccess.CRUD
 
         public override void Update(BaseDTO baseDTO)
         {
-            throw new NotImplementedException();
+            var user = baseDTO as User;
+
+            var sqlOperation = new SqlOperation() { ProcedureName = "UPD_USER_PR" };
+
+            sqlOperation.AddIntParam("P_Id", user.Id); // Solo para búsqueda
+            sqlOperation.AddStringParameter("P_UserCode", user.UserCode);
+            sqlOperation.AddStringParameter("P_Name", user.Name);
+            sqlOperation.AddStringParameter("P_Email", user.Email);
+            sqlOperation.AddStringParameter("P_Password", user.Password);
+            sqlOperation.AddDateTimeParam("P_BirthDate", user.BirthDate);
+            sqlOperation.AddStringParameter("P_Status", user.Status);
+
+            _sqlDao.ExecuteProcedure(sqlOperation);
         }
 
         //Metodo que convierte un Dictionary a un objeto User

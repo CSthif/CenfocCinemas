@@ -1,4 +1,5 @@
-﻿using DataAccess.CRUD;
+﻿using CoreApp.Services;
+using DataAccess.CRUD;
 using DTOs;
 using System;
 using System.Collections.Generic;
@@ -10,45 +11,49 @@ namespace CoreApp
 {
     public class UserManager : BaseManager
     {
-
         /*
-         * Metodo para crear un usuario.
+         * Metodo para la creacion de un usuario
          * Valida que el usuario sea mayor de 18 años
-         * Valida que el codigo de usuario está disponible
-         * Valida que el email no esté registrado
-         * Envia un email de bienvenida al usuario
+         * Valida que el codigo de un usuario este disponible
+         * Valida que el correo electronico no este rgistrado
+         * Envia un correo electronico de bienvenida
          */
+
         public void Create(User user)
         {
             try
             {
-                //Validar la edad
-                if (!IsOver18(user))
+                //Validar la edad del usuario
+                if (IsOver18(user))
                 {
                     var uCrud = new UserCrudFactory();
 
-                    //Consultamos en la base de datos si el codigo de usuario ya existe
+                    //Consultamos en la BD si existe un usuario con el mismo código
+
                     var uExist = uCrud.RetrieveByUserCode<User>(user);
 
                     if (uExist == null)
                     {
-                        //Consutamos en la base de datos si el email ya existe
+                        //Consultamos si en la bd existe un usuario con ese email
                         uExist = uCrud.RetrieveByEmail<User>(user);
 
                         if (uExist == null)
                         {
-                            //Si el usuario es mayor de 18 años y el codigo de usuario y email no existen, creamos el usuario
                             uCrud.Create(user);
-                            //Enviar email de bienvenida al usuario
+
+                            var emailService = new EmailService();
+                            emailService.EmailCreateUser(user.Email, user.Name);
+
+                            Console.WriteLine("Usuario creado exitosamente y correo de bienvenida enviado.");
                         }
                         else
                         {
-                            throw new Exception("El email ya está registrado.");
+                            throw new Exception("El correo electrónico ya está registrado.");
                         }
                     }
                     else
                     {
-                        throw new Exception("El código de usuario ya está en uso.");
+                        throw new Exception("El código de usuario no está disponible.");
                     }
                 }
                 else
@@ -62,6 +67,59 @@ namespace CoreApp
             }
         }
 
+        public List<User> RetrieveAll()
+        {
+            var uCrud = new UserCrudFactory();
+            return uCrud.RetrieveAll<User>();
+        }
+
+        public User RetrieveById(int id)
+        {
+            var uCrud = new UserCrudFactory();
+            var user = uCrud.RetrieveById<User>(id);
+            return user;
+        }
+
+        public User RetrieveByEmail(string email)
+        {
+            var uCrud = new UserCrudFactory();
+            var user = new User { Email = email };
+            return uCrud.RetrieveByEmail<User>(user);
+        }
+
+        public User RetrieveByUserCode(string userCode)
+        {
+            var uCrud = new UserCrudFactory();
+            var user = new User { UserCode = userCode };
+            return uCrud.RetrieveByUserCode<User>(user);
+        }
+
+        public void Update(User user)
+        {
+            try
+            {
+                var uCrud = new UserCrudFactory();
+                uCrud.Update(user);
+            }
+            catch (Exception ex)
+            {
+                ManageException(ex);
+            }
+        }
+
+        public void Delete(int id)
+        {
+            try
+            {
+                var user = new User { Id = id };
+                var uCrud = new UserCrudFactory();
+                uCrud.Delete(user);
+            }
+            catch (Exception ex)
+            {
+                ManageException(ex);
+            }
+        }
         private bool IsOver18(User user)
         {
             var currentDate = DateTime.Now;

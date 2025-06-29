@@ -21,7 +21,7 @@ namespace DataAccess.CRUD
 
             var sqlOperation = new SqlOperation() { ProcedureName = "CRE_MOVIE_PR" };
             sqlOperation.AddStringParameter("P_Title", movie.Title);
-            sqlOperation.AddStringParameter("P_Description", movie.Description);
+            sqlOperation.AddStringParameter("P_Desc", movie.Description);
             sqlOperation.AddDateTimeParam("P_ReleaseDate", movie.ReleaseDate);
             sqlOperation.AddStringParameter("P_Genre", movie.Genre);
             sqlOperation.AddStringParameter("P_Director", movie.Director);
@@ -104,7 +104,7 @@ namespace DataAccess.CRUD
 
             sqlOperation.AddIntParam("P_Id", movie.Id);
             sqlOperation.AddStringParameter("P_Title", movie.Title);
-            sqlOperation.AddStringParameter("P_Description", movie.Description);
+            sqlOperation.AddStringParameter("P_Desc", movie.Description);
             sqlOperation.AddDateTimeParam("P_ReleaseDate", movie.ReleaseDate);
             sqlOperation.AddStringParameter("P_Genre", movie.Genre);
             sqlOperation.AddStringParameter("P_Director", movie.Director);
